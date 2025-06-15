@@ -1,75 +1,69 @@
 <template>
-  <b-container>
-    <h3>
-      {{ title }}:
-      <slot></slot>
-    </h3>
-    <b-row>
-      <b-col v-for="r in recipes" :key="r.id">
-        <RecipePreview class="recipePreview" :recipe="r" />
-      </b-col>
-    </b-row>
-  </b-container>
+  <div class="preview-list">
+    <RecipePreview
+      v-for="r in recipes"
+      :key="r.id"
+      :recipe="r"
+      :liked="userLikes.includes(r.id)"
+      :favorited="userFavorites.includes(r.id)"
+      @toggle-like="toggleLike"
+      @toggle-fav="toggleFav"
+    />
+  </div>
 </template>
 
 <script>
-import RecipePreview from "./RecipePreview.vue";
+import axios from 'axios';
+import RecipePreview from './RecipePreview.vue';
 export default {
-  name: "RecipePreviewList",
-  components: {
-    RecipePreview
-  },
-  props: {
-    title: {
-      type: String,
-      required: true
-    }
-  },
+  name: 'RecipePreviewList',
+  components: { RecipePreview },
+  props: { recipes: { type: Array, required: true } },
   data() {
     return {
-      recipes: []
+      userFavorites: [],
+      userLikes: []
     };
   },
-  mounted() {
-    this.updateRecipes();
+  async created() {
+    await this.fetchUserFavorites();
+    // userLikes could come from a separate endpoint or tracked locally
   },
   methods: {
-    async updateRecipes() {
+    async fetchUserFavorites() {
       try {
-        const response = await this.axios.get(
-          "https://api.spoonacular.com/recipes/random",
-          {
-            params: {
-              limitLicense: true,
-              number: 3,
-              apiKey: 'b7b147413c244375812ccb826d79cdcc'
-            }
-          }
-        );
-
-        console.log("response: ", response);
-        const recipes = response.data.recipes.map((r) => {
-          return {
-            id: r.id,
-            title: r.title,
-            readyInMinutes: r.readyInMinutes,
-            image: r.image,
-            aggregateLikes: r.aggregateLikes
-          };
-        });
-        this.recipes = [];
-        this.recipes.push(...recipes);
-        console.log("recipes:  " , this.recipes);
-      } catch (error) {
-        console.log(error);
+        const res = await axios.get('/users/favorites');
+        this.userFavorites = res.data;
+      } catch {
+        console.error('Failed to fetch user favorites');
+      }
+    },
+    async toggleFav(id) {
+      try {
+        if (this.userFavorites.includes(id)) {
+          await axios.delete(`/users/favorites/${id}`);
+        } else {
+          await axios.post('/users/favorites', { recipeId: id });
+        }
+        await this.fetchUserFavorites();
+        this.$emit('toggle-fav');
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    async toggleLike(id) {
+      try {
+        await axios.post('/users/likespooncular', null, { params: { id } });
+        // Optionally update local like state
+        this.userLikes = this.userLikes.includes(id)
+          ? this.userLikes.filter(x => x !== id)
+          : [...this.userLikes, id];
+      } catch (e) {
+        console.error(e);
       }
     }
   }
 };
 </script>
 
-<style lang="scss" scoped>
-.container {
-  min-height: 400px;
-}
-</style>
+<style scoped></style>

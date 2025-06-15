@@ -1,72 +1,55 @@
 <template>
-  <div class="login-page">
-    <h1>Login</h1>
+  <div class="login-page container py-4">
+    <h2>Login</h2>
     <form @submit.prevent="login">
-      <div class="form-group">
-        <label>Username:</label>
-        <input v-model="state.username" type="text" class="form-control" />
-        <div v-if="v$.username.$error" class="text-danger">
-          Username is required.
-        </div>
+      <div class="mb-3">
+        <label for="username">Username</label>
+        <input v-model="credentials.username" id="username" class="form-control" required />
       </div>
-      <div class="form-group">
-        <label>Password:</label>
-        <input v-model="state.password" type="password" class="form-control" />
-        <div v-if="v$.password.$error" class="text-danger">
-          Password is required (at least 6 characters).
-        </div>
+      <div class="mb-3">
+        <label for="password">Password</label>
+        <input v-model="credentials.password" id="password" type="password" class="form-control" required />
       </div>
-      <button type="submit" class="btn btn-primary mt-3">Login</button>
+      <div v-if="error" class="alert alert-danger">{{ error }}</div>
+      <button class="btn btn-primary w-100">Login</button>
     </form>
+    <p class="mt-3 text-center">
+      Don't have an account? <router-link to="/register">Register here</router-link>
+    </p>
   </div>
 </template>
 
 <script>
-import { reactive } from 'vue';
-import { useVuelidate } from '@vuelidate/core';
-import { required, minLength } from '@vuelidate/validators';
+import axios from 'axios';
+import store from '@/store';
 
 export default {
-  name: "LoginPage",
-  setup(_, { expose }) {
-    const state = reactive({
-      username: '',
-      password: '',
-    });
-
-    const rules = {
-      username: { required },
-      password: { required, minLength: minLength(6) },
+  name: 'LoginPage',
+  data() {
+    return {
+      credentials: { username: '', password: '' },
+      error: null
     };
-
-    const v$ = useVuelidate(rules, state);
-
-    const login = async () => {
-      if (await v$.value.$validate()) {
-        // קריאה לשרת
-        try {
-          await window.axios.post('/login', {
-            username: state.username,
-            password: state.password
-          });
-          window.store.login(state.username);
-          window.router.push('/main');
-        } catch (err) {
-          window.toast("Login failed", err.response.data.message, "danger");
-        }
+  },
+  methods: {
+    async login() {
+      this.error = null;
+      try {
+        await axios.post(
+          `${store.server_domain}/auth/Login`,
+          this.credentials,
+          { withCredentials: true }
+        );
+        store.login(this.credentials.username);
+        this.$router.push('/');
+      } catch (e) {
+        this.error = e.response?.data?.message || 'Login failed';
       }
-    };
-
-    expose({ login });
-
-    return { state, v$, login };
+    }
   }
 };
 </script>
 
 <style scoped>
-.login-page {
-  max-width: 400px;
-  margin: auto;
-}
+.login-page { max-width: 400px; margin: auto; }
 </style>

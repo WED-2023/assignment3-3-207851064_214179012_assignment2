@@ -23,15 +23,15 @@ const routes = [
     component: () => import("../pages/SearchPage.vue"),
   },
   {
-    path: "/recipe/:recipeId",
-    name: "recipe",
+    path: "/recipe",
+    name: "RecipeView",
     component: () => import("../pages/RecipeViewPage.vue"),
   },
   {
     path: "/:catchAll(.*)",
     name: "notFound",
     component: NotFound,
-  }
+  },
 ];
 
 export default routes;
