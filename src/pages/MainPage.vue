@@ -42,17 +42,26 @@ export default {
   },
   methods: {
     async fetchRandom() {
-      const res = await axios.get(`${store.server_domain}/recipes/random`, { params: { number: 3 } });
-      this.randomRecipes = res.data;
+      try {
+        const res = await axios.get(`${store.server_domain}/recipes/random`, { params: { number: 3 } });
+        this.randomRecipes = res.data;
+      } catch (e) {
+        console.error('Failed to fetch random recipes', e);
+      }
     },
     refresh() { return this.fetchRandom(); },
     async fetchHistory() {
-      const resIds = await axios.get(`${store.server_domain}/users/history`, { withCredentials: true });
-      const ids = resIds.data.join(',');
-      if (ids) {
-        const res = await axios.get(`${store.server_domain}/recipes/home`, { params: { ids }, withCredentials: true });
-        this.historyRecipes = res.data;
+      try {
+        const resIds = await axios.get(`${store.server_domain}/users/history`, { withCredentials: true });
+        const ids = resIds.data.join(',');
+        if (ids) {
+          const res = await axios.get(`${store.server_domain}/recipes/home`, { params: { ids }, withCredentials: true });
+          this.historyRecipes = res.data;
+        }
+      } catch (e) {
+        console.error('Failed to fetch last viewed recipes', e);
       }
+      
     },
     logout() {
       store.logout();

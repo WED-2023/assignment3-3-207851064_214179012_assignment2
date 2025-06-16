@@ -162,7 +162,8 @@ export default {
           `${store.server_domain}/auth/Register`,
           this.form
         );
-        this.$router.push({ name: 'LoginPage' });
+        this.$router.push('/login');
+        // this.$router.push({ name: 'LoginPage' });
       } catch (e) {
         this.error = e.response?.data?.message;
       }

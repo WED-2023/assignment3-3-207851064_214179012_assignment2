@@ -4,8 +4,8 @@
       v-for="r in recipes"
       :key="r.id"
       :recipe="r"
-      :liked="userLikes.includes(r.id)"
-      :favorited="userFavorites.includes(r.id)"
+      :liked="Array.isArray(userLikes) && userLikes.includes(r.id)"
+      :favorited="Array.isArray(userFavorites) && userFavorites.includes(r.id)"
       @toggle-like="toggleLike"
       @toggle-fav="toggleFav"
     />
@@ -14,11 +14,14 @@
 
 <script>
 import axios from 'axios';
+import store from '@/store';
 import RecipePreview from './RecipePreview.vue';
 export default {
   name: 'RecipePreviewList',
   components: { RecipePreview },
-  props: { recipes: { type: Array, required: true } },
+  props: {
+    recipes: { type: Array, required: true }
+  },
   data() {
     return {
       userFavorites: [],
@@ -27,39 +30,46 @@ export default {
   },
   async created() {
     await this.fetchUserFavorites();
-    // userLikes could come from a separate endpoint or tracked locally
+    await this.fetchUserLikes();
   },
   methods: {
     async fetchUserFavorites() {
       try {
-        const res = await axios.get('/users/favorites');
-        this.userFavorites = res.data;
-      } catch {
-        console.error('Failed to fetch user favorites');
+        const res = await axios.get(`${store.server_domain}/users/favorites`, { withCredentials: true });
+        this.userFavorites = Array.isArray(res.data) ? res.data : [];
+      } catch (e) {
+        this.userFavorites = [];
+      }
+    },
+    async fetchUserLikes() {
+      try {
+        const res = await axios.get(`${store.server_domain}/users/recipesliked`, { withCredentials: true });
+        // backend returns raw array
+        this.userLikes = Array.isArray(res.data) ? res.data : res.data.liked || [];
+      } catch (e) {
+        this.userLikes = [];
       }
     },
     async toggleFav(id) {
       try {
-        if (this.userFavorites.includes(id)) {
-          await axios.delete(`/users/favorites/${id}`);
-        } else {
-          await axios.post('/users/favorites', { recipeId: id });
-        }
+        await axios.post(`${store.server_domain}/users/favorites`, { recipeId: id }, { withCredentials: true });
         await this.fetchUserFavorites();
         this.$emit('toggle-fav');
-      } catch (e) {
-        console.error(e);
+      } catch(e) {
+        console.log(e);
       }
     },
     async toggleLike(id) {
       try {
-        await axios.post('/users/likespooncular', null, { params: { id } });
-        // Optionally update local like state
-        this.userLikes = this.userLikes.includes(id)
-          ? this.userLikes.filter(x => x !== id)
-          : [...this.userLikes, id];
+        await axios.post(
+          `${store.server_domain}/users/likespooncular`,
+          null,
+          { params: { id }, withCredentials: true }
+        );
+        await this.fetchUserLikes();
+        this.$emit('toggle-like');
       } catch (e) {
-        console.error(e);
+        console.error('toggleLike error', e);
       }
     }
   }
