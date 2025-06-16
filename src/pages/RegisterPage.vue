@@ -1,35 +1,3 @@
-// src/main.js
-import { createApp } from 'vue';
-import App from './App.vue';
-import routes from './router/index';
-import axios from 'axios';
-import { createRouter, createWebHistory } from 'vue-router';
-import store from './store';
-
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap/dist/js/bootstrap.bundle.js';
-
-// Set base URL for Axios
-axios.defaults.baseURL = process.env.VUE_APP_API_URL || 'http://localhost:3000';
-
-const router = createRouter({
-  history: createWebHistory(),
-  routes
-});
-
-const app = createApp(App);
-
-// Install router
-app.use(router);
-// Make store available in components
-app.config.globalProperties.$store = store;
-// Also expose axios directly if needed
-app.config.globalProperties.$axios = axios;
-
-app.mount('#app');
-
-// -------------------------
-// src/pages/RegisterPage.vue
 <template>
   <div class="register-page container py-4">
     <h2>Register</h2>
@@ -43,7 +11,7 @@ app.mount('#app');
             class="form-control"
             required
             minlength="3"
-            maxlength="30"
+            maxlength="8"
           />
         </div>
         <div class="col-md-6 mb-3">
@@ -86,7 +54,8 @@ app.mount('#app');
             type="password"
             class="form-control"
             required
-            minlength="8"
+            minlength="5"
+            maxlength="10"
           />
         </div>
         <div class="col-md-6 mb-3">
@@ -155,9 +124,27 @@ export default {
     };
   },
   methods: {
+    // returns null if ok, or an error message
+    validate() {
+    // username: 3–8 letters only
+    if (!/^[A-Za-z]{3,8}$/.test(this.form.username)) {
+      return 'Username must be 3–8 letters only.';
+    }
+    // password: 5–10 chars, at least one digit and one special
+    if (!/^(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{5,10}$/.test(this.form.password)) {
+      return 'Password must be 5–10 chars, include at least one number and one special character.';
+    }
+    return null;
+  },
     async register() {
       this.error = null;
       try {
+        // Validate form data
+        const validationError = this.validate();
+        if (validationError) {
+          this.error = validationError;
+          return;
+        }
         await axios.post(
           `${store.server_domain}/auth/Register`,
           this.form
