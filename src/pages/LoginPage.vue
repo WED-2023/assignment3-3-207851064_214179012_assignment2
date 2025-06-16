@@ -41,7 +41,9 @@ export default {
           { withCredentials: true }
         );
         store.login(this.credentials.username);
-        this.$router.push('/');
+        this.$router.push({ name: 'main' }).then(() => {
+          window.location.reload();
+        });
       } catch (e) {
         this.error = e.response?.data?.message || 'Login failed';
       }

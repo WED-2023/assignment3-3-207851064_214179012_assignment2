@@ -67,7 +67,9 @@ export default {
       store.logout();
       localStorage.removeItem('token');
       delete axios.defaults.headers.common['Authorization'];
-      this.$router.push('/login');
+      this.$router.push({ name: 'main' }).then(() => {
+          window.location.reload();
+        });
     }
   }
 };
