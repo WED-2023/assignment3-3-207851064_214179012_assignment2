@@ -6,6 +6,7 @@
       :recipe="r"
       :liked="Array.isArray(userLikes) && userLikes.includes(r.id)"
       :favorited="Array.isArray(userFavorites) && userFavorites.includes(r.id)"
+      :viewed="userHistory.includes(r.id)"
       @toggle-like="toggleLike"
       @toggle-fav="toggleFav"
     />
@@ -25,12 +26,14 @@ export default {
   data() {
     return {
       userFavorites: [],
-      userLikes: []
+      userLikes: [],
+      userHistory: [],
     };
   },
   async created() {
     await this.fetchUserFavorites();
     await this.fetchUserLikes();
+    await this.fetchUserHistory();
   },
   methods: {
     async fetchUserFavorites() {
@@ -48,6 +51,17 @@ export default {
         this.userLikes = Array.isArray(res.data) ? res.data : res.data.liked || [];
       } catch (e) {
         this.userLikes = [];
+      }
+    },
+    async fetchUserHistory() {
+      try {
+        const res = await axios.get(
+          `${store.server_domain}/users/history`,
+          { withCredentials: true }
+        );
+        this.userHistory = Array.isArray(res.data) ? res.data : [];
+      } catch {
+        console.error('Failed to fetch view history');
       }
     },
     async toggleFav(id) {
@@ -68,6 +82,7 @@ export default {
         );
         await this.fetchUserLikes();
         this.$emit('toggle-like');
+        window.location.reload();
       } catch (e) {
         console.error('toggleLike error', e);
       }

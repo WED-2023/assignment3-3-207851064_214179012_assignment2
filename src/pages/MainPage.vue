@@ -30,20 +30,29 @@ export default {
   name: 'MainPage',
   components: { RecipePreviewList },
   data() {
-    return { randomRecipes: [], historyRecipes: [] };
+    return {
+      randomRecipes: [],
+      historyRecipes: []
+    };
   },
   computed: {
     username() { return store.username; },
     isAuthenticated() { return !!localStorage.getItem('username'); }
   },
-  async created() {
-    await this.refresh();
-    if (this.isAuthenticated) await this.fetchHistory();
+  async mounted() {
+    // initial fetch only on first render
+    await this.fetchRandom();
+    if (this.isAuthenticated) {
+      await this.fetchHistory();
+    }
   },
   methods: {
     async fetchRandom() {
       try {
-        const res = await axios.get(`${store.server_domain}/recipes/random`, { params: { number: 3 } });
+        const res = await axios.get(
+          `${store.server_domain}/recipes/random`,
+          { params: { number: 3 } }
+        );
         this.randomRecipes = res.data;
       } catch (e) {
         console.error('Failed to fetch random recipes', e);
@@ -52,24 +61,27 @@ export default {
     refresh() { return this.fetchRandom(); },
     async fetchHistory() {
       try {
-        const resIds = await axios.get(`${store.server_domain}/users/history`, { withCredentials: true });
-        const ids = resIds.data.join(',');
+        const resIds = await axios.get(
+          `${store.server_domain}/users/history`,
+          { withCredentials: true }
+        );
+        const ids = resIds.data.slice(0,3).join(','); // limit to 3 most recent
         if (ids) {
-          const res = await axios.get(`${store.server_domain}/recipes/home`, { params: { ids }, withCredentials: true });
+          const res = await axios.get(
+            `${store.server_domain}/recipes/home`,
+            { params: { ids }, withCredentials: true }
+          );
           this.historyRecipes = res.data;
         }
       } catch (e) {
         console.error('Failed to fetch last viewed recipes', e);
       }
-      
     },
     logout() {
       store.logout();
       localStorage.removeItem('token');
       delete axios.defaults.headers.common['Authorization'];
-      this.$router.push({ name: 'main' }).then(() => {
-          window.location.reload();
-        });
+      this.$router.push({ name: 'main' }).then(() => window.location.reload());
     }
   }
 };
