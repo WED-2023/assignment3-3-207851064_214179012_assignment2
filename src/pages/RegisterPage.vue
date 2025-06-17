@@ -59,6 +59,17 @@
           />
         </div>
         <div class="col-md-6 mb-3">
+          <label class="form-label">Confirm Password</label>
+          <input
+            v-model="this.Cpassword"
+            type="password"
+            class="form-control"
+            required
+            minlength="5"
+            maxlength="10"
+          />
+        </div>
+        <div class="col-md-6 mb-3">
           <label class="form-label">Country</label>
           <select
             v-model="form.country"
@@ -110,6 +121,7 @@ export default {
         email: '',
         profilePic: ''
       },
+      Cpassword: '', // for confirm password
       // static list of countries
       countries: [
         { name: 'Australia', code: 'AU' },
@@ -133,6 +145,10 @@ export default {
     // password: 5–10 chars, at least one digit and one special
     if (!/^(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{5,10}$/.test(this.form.password)) {
       return 'Password must be 5–10 chars, include at least one number and one special character.';
+    }
+    // confirm password matches
+    if (this.form.password !== this.Cpassword) {
+      return 'Passwords do not match.';
     }
     return null;
   },
