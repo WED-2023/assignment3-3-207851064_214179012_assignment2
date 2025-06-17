@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-md-8">
         <h3>Random Recipes</h3>
-        <RecipePreviewList :recipes="randomRecipes" @toggle-fav="fetchHistory" />
+        <RecipePreviewList :recipes="randomRecipes"/>
         <button class="btn btn-outline-primary mt-3" @click="refresh">Refresh</button>
       </div>
       <div class="col-md-4">
@@ -11,7 +11,7 @@
           <p class="fw-bold">Hello {{ username }}</p>
           <button class="btn btn-secondary mb-3" @click="logout">Logout</button>
           <h5>Last Watched Recipes</h5>
-          <RecipePreviewList :recipes="historyRecipes" @toggle-fav="fetchHistory" />
+          <RecipePreviewList :recipes="historyRecipes"/>
         </div>
         <div v-else>
           <p>Please <router-link to="/login">login</router-link> to see your history.</p>

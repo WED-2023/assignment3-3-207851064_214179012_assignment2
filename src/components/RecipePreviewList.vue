@@ -4,11 +4,11 @@
       v-for="r in recipes"
       :key="r.id"
       :recipe="r"
-      :liked="Array.isArray(userLikes) && userLikes.includes(r.id)"
-      :favorited="Array.isArray(userFavorites) && userFavorites.includes(r.id)"
-      :viewed="userHistory.includes(r.id)"
-      @toggle-like="toggleLike"
-      @toggle-fav="toggleFav"
+      :recipe_liked="userLikes.includes(r.id)"
+      :recipe_favorited="userFavorites.includes(r.id)"
+      :recipe_viewed="userHistory.includes(r.id)"
+      @toggle-like="fetchUserLikes"
+      @toggle-fav="fetchUserFavorites"
     />
   </div>
 </template>
@@ -39,7 +39,7 @@ export default {
     async fetchUserFavorites() {
       try {
         const res = await axios.get(`${store.server_domain}/users/favorites`, { withCredentials: true });
-        this.userFavorites = Array.isArray(res.data) ? res.data : [];
+        this.userFavorites = res.data;
       } catch (e) {
         this.userFavorites = [];
       }
@@ -47,46 +47,19 @@ export default {
     async fetchUserLikes() {
       try {
         const res = await axios.get(`${store.server_domain}/users/recipesliked`, { withCredentials: true });
-        // backend returns raw array
-        this.userLikes = Array.isArray(res.data) ? res.data : res.data.liked || [];
+        this.userLikes = res.data;
       } catch (e) {
         this.userLikes = [];
       }
     },
     async fetchUserHistory() {
       try {
-        const res = await axios.get(
-          `${store.server_domain}/users/history`,
-          { withCredentials: true }
-        );
-        this.userHistory = Array.isArray(res.data) ? res.data : [];
+        const res = await axios.get(`${store.server_domain}/users/history`, { withCredentials: true });
+        this.userHistory = res.data;
       } catch {
         console.error('Failed to fetch view history');
       }
     },
-    async toggleFav(id) {
-      try {
-        await axios.post(`${store.server_domain}/users/favorites`, { recipeId: id }, { withCredentials: true });
-        await this.fetchUserFavorites();
-        this.$emit('toggle-fav');
-      } catch(e) {
-        console.log(e);
-      }
-    },
-    async toggleLike(id) {
-      try {
-        await axios.post(
-          `${store.server_domain}/users/likespooncular`,
-          null,
-          { params: { id }, withCredentials: true }
-        );
-        await this.fetchUserLikes();
-        this.$emit('toggle-like');
-        window.location.reload();
-      } catch (e) {
-        console.error('toggleLike error', e);
-      }
-    }
   }
 };
 </script>
