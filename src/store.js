@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { reactive } from 'vue';
 
 const store = reactive({
@@ -12,6 +13,8 @@ const store = reactive({
 
   logout() {
     console.log("logout");
+    axios.post(`${this.server_domain}/auth/Logout`,null,
+  { withCredentials: true });
     localStorage.removeItem('username');
     this.username = undefined;
   }
