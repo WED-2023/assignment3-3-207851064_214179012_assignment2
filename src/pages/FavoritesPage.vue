@@ -1,7 +1,12 @@
 <template>
   <div class="container py-4">
     <h2>My Favorits</h2>
+    <div v-if="favorites.length === 0" class="alert alert-info">
+          No favorite recipes yet.
+    </div>
+    <div v-else>
     <RecipePreviewList :recipes="favorites" />
+    </div>
   </div>
 </template>
 <script>

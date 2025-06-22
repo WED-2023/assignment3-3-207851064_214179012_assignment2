@@ -71,19 +71,11 @@
         </div>
         <div class="col-md-6 mb-3">
           <label class="form-label">Country</label>
-          <select
-            v-model="form.country"
-            class="form-select"
-            required
-          >
-            <option value="" disabled>Choose a country…</option>
-            <option
-              v-for="c in countries"
-              :key="c.code"
-              :value="c.code"
-            >
-              {{ c.name }}
-            </option>
+          <select v-model="form.country" class="form-select" required>
+          <option disabled value="">Choose a country…</option>
+          <option v-for="c in countries" :key="c" :value="c">
+            {{ c }}
+          </option>
           </select>
         </div>
       </div>
@@ -121,19 +113,29 @@ export default {
         email: '',
         profilePic: ''
       },
-      Cpassword: '', // for confirm password
-      // static list of countries
-      countries: [
-        { name: 'Australia', code: 'AU' },
-        { name: 'Canada', code: 'CA' },
-        { name: 'France', code: 'FR' },
-        { name: 'Germany', code: 'DE' },
-        { name: 'Israel', code: 'IL' },
-        { name: 'United Kingdom', code: 'GB' },
-        { name: 'United States', code: 'US' }
-      ],
+      countries: [],
+      Cpassword: '',
       error: null
     };
+  },
+  async created() {
+
+    const exclude = ['Palestine', 'Iran']
+    try {
+      const res = await axios.get(
+        'https://restcountries.com/v3.1/all?fields=name'
+      );
+      this.countries = res.data
+      // 1) take only the common name string
+      .map(c => c.name.common)
+      // 2) optionally exclude some
+      .filter(name => !exclude.includes(name))
+      // 3) sort alphabetically
+      .sort((a, b) => a.localeCompare(b));
+    } catch (e) {
+      console.error('Failed to load countries list', e);
+      this.countries = [];
+    }
   },
   methods: {
     // returns null if ok, or an error message

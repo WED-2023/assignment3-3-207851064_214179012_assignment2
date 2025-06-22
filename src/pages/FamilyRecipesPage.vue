@@ -11,7 +11,7 @@
 
     <!-- If authenticated, show option to add new recipe and list of recipes -->
     <div v-else>
-      <button @click="creating = !creating" class="btn btn-success mb-3">
+      <!-- <button @click="creating = !creating" class="btn btn-success mb-3">
         {{ creating ? 'Cancel' : 'Create New Family Recipe' }}
       </button>
 
@@ -37,7 +37,7 @@
           <textarea v-model="newRecipe.instructions" required class="form-control" rows="3"></textarea>
         </div>
         <button type="submit" class="btn btn-primary">Save Recipe</button>
-      </form>
+      </form> -->
 
       <div v-if="loading" class="text-center py-5">
         Loading recipes...

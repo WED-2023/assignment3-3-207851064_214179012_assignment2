@@ -3,11 +3,14 @@
     <!-- Clickable image wrapper -->
     <router-link
       :to="{ name: 'RecipeView', query: { id: id } }"
-      class="d-block position-relative">
+      class="d-block position-relative"
+      style="border-radius: 0.5rem 0.5rem 0 0; overflow: hidden;">
       <img
         :src="image"
         class="card-img-top clickable-img"
-        alt="recipe image"/>
+        alt="recipe image"
+        style="height: 200px; object-fit: cover;"
+      />
       <div class="click-hint">
         Click to view recipe
       </div>
@@ -44,7 +47,7 @@
       </div>
 
       <!-- Action buttons -->
-      <div>
+      <div class="d-flex flex-column align-items-stretch gap-2 mt-2">
         <button
           type="button"
           @click="toggleLike"
@@ -56,18 +59,17 @@
           v-if="!favorited"
           type="button"
           @click="toggleFavorite"
-          class="btn btn-sm ms-2 btn-outline-warning">
+          class="btn btn-sm btn-outline-warning">
           Add to Favorites
         </button>
         <span
           v-else
-          class="btn btn-sm ms-2 btn-warning disabled">
+          class="btn btn-sm btn-warning disabled">
           Saved to Favorites
         </span>
-
         <router-link
           :to="{ name: 'RecipeView', query: { id: recipe.id } }"
-          class="btn btn-sm btn-primary ms-2">
+          class="btn btn-sm btn-primary">
           View
         </router-link>
       </div>

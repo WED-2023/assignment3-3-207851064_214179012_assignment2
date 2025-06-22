@@ -1,17 +1,19 @@
 <template>
   <div class="main-page container py-4">
     <div class="row">
-      <div class="col-md-8">
+      <div class="col-md-4">
         <h3>Random Recipes</h3>
-        <RecipePreviewList :recipes="randomRecipes"/>
+        <RecipePreviewList 
+        :recipes="randomRecipes"
+        class="horizontal-list"/>
         <button class="btn btn-outline-primary mt-3" @click="refresh">Refresh</button>
       </div>
       <div class="col-md-4">
         <div v-if="isAuthenticated">
-          <p class="fw-bold">Hello {{ username }}</p>
-          <button class="btn btn-secondary mb-3" @click="logout">Logout</button>
-          <h5>Last Watched Recipes</h5>
-          <RecipePreviewList :recipes="historyRecipes"/>
+          <h3>Last Watched Recipes</h3>
+          <RecipePreviewList 
+          v-if="historyRecipes.length"
+          :recipes="historyRecipes"/>
         </div>
         <div v-else>
           <p>Please <router-link to="/login">login</router-link> to see your history.</p>
@@ -77,14 +79,20 @@ export default {
         console.error('Failed to fetch last viewed recipes', e);
       }
     },
-    logout() {
-      store.logout();
-      localStorage.removeItem('token');
-      delete axios.defaults.headers.common['Authorization'];
-      this.$router.push({ name: 'main' }).then(() => window.location.reload());
-    }
   }
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.horizontal-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.horizontal-list > * {
+  flex: 0 0 220px; /* Adjust width as needed */
+  max-width: 220px;
+}
+</style>

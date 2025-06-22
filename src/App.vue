@@ -37,6 +37,9 @@
                 <router-link class="dropdown-item" :to="{ name: 'favorites' }">My Favorites</router-link>
               </li>
               <li>
+                <router-link class="dropdown-item" :to="{ name: 'myRecipes' }">My Recipes</router-link>
+              </li>
+              <li>
                 <router-link class="dropdown-item" :to="{ name: 'familyRecipes' }">Family Recipes</router-link>
               </li>
               <li><hr class="dropdown-divider"/></li>
