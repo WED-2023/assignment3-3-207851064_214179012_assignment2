@@ -5,7 +5,9 @@
           No favorite recipes yet.
     </div>
     <div v-else>
-    <RecipePreviewList :recipes="favorites" />
+      <RecipePreviewList 
+      :recipes="favorites"
+      class="horizontal-list"/>
     </div>
   </div>
 </template>
@@ -33,3 +35,16 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.horizontal-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.horizontal-list > * {
+  flex: 0 0 220px; /* Adjust width as needed */
+  max-width: 220px;
+}
+</style>

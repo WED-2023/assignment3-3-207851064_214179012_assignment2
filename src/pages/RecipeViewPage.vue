@@ -17,11 +17,15 @@
     </div>
     
     <p>Ready in {{ recipe.readyInMinutes }} minutes | Servings: {{ recipe.servings }}</p>
+    
+    <h5>Ingredients:</h5>
     <ul>
       <li v-for="ing in recipe.ingredients" :key="ing.id">
         {{ ing.amount }} {{ ing.unit }} {{ ing.name }}
       </li>
     </ul>
+
+    <h5>Instructions:</h5>
     <ol>
       <li v-for="step in recipe.instructions" :key="step.number">
         {{ step.step }}

@@ -1,19 +1,17 @@
 <template>
-  <div class="main-page container py-4">
+  <div class="main-page container-fluid py-4">
     <div class="row">
-      <div class="col-md-4">
+      <!-- Random Recipes Column -->
+      <div class="col-6 no-flex-col">
         <h3>Random Recipes</h3>
-        <RecipePreviewList 
-        :recipes="randomRecipes"
-        class="horizontal-list"/>
+        <RecipePreviewList :recipes="randomRecipes" />
         <button class="btn btn-outline-primary mt-3" @click="refresh">Refresh</button>
       </div>
-      <div class="col-md-4">
+      <!-- Last Watched Recipes Column -->
+      <div class="col-6 no-flex-col">
         <div v-if="isAuthenticated">
           <h3>Last Watched Recipes</h3>
-          <RecipePreviewList 
-          v-if="historyRecipes.length"
-          :recipes="historyRecipes"/>
+          <RecipePreviewList v-if="historyRecipes.length" :recipes="historyRecipes" />
         </div>
         <div v-else>
           <p>Please <router-link to="/login">login</router-link> to see your history.</p>
@@ -84,6 +82,10 @@ export default {
 </script>
 
 <style scoped>
+/* Fix Bootstrap's col flex direction if needed */
+.no-flex-col {
+  display: block !important;
+}
 .horizontal-list {
   display: flex;
   flex-direction: row;
@@ -92,7 +94,7 @@ export default {
   margin-top: 1.5rem;
 }
 .horizontal-list > * {
-  flex: 0 0 220px; /* Adjust width as needed */
+  flex: 0 0 220px;
   max-width: 220px;
 }
 </style>

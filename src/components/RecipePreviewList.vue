@@ -1,5 +1,5 @@
 <template>
-  <div class="preview-list">
+  <div class="horizontal-list">
     <RecipePreview
       v-for="r in recipes"
       :key="r.id"
@@ -64,4 +64,15 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.horizontal-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.horizontal-list > * {
+  flex: 0 0 20rem;
+  max-width: 20rem;
+}
+</style>

@@ -1,80 +1,72 @@
 <template>
-  <div class="card mb-4 preview-card position-relative">
-    <!-- Clickable image wrapper -->
-    <router-link
-      :to="{ name: 'RecipeView', query: { id: id } }"
-      class="d-block position-relative"
-      style="border-radius: 0.5rem 0.5rem 0 0; overflow: hidden;">
-      <img
-        :src="image"
-        class="card-img-top clickable-img"
-        alt="recipe image"
-        style="height: 200px; object-fit: cover;"
-      />
-      <div class="click-hint">
-        Click to view recipe
-      </div>
-    </router-link>
+  <b-card
+    class="mb-4 preview-card position-relative"
+    style="max-width: 20rem;"
+  >
+    <!-- Clickable image overlay -->
+    <template #header>
+      <router-link
+        :to="{ name: 'RecipeView', query: { id: id } }"
+        class="d-block position-relative"
+        style="border-radius: 0.5rem 0.5rem 0 0; overflow: hidden;"
+      >
+        <img
+          :src="image"
+          alt="recipe image"
+          class="w-100 clickable-img"
+          style="height: 200px; object-fit: cover;"
+        />
+        <div class="click-hint">Click to view recipe</div>
+      </router-link>
+    </template>
 
-    <div class="card-body">
-      <h5 class="card-title">{{ title }}</h5>
-      <p class="card-text">
-        {{ readyInMinutes }} mins |
-        Likes: {{ aggregateLikes }}
-      </p>
+    <h5 class="card-title">{{ title }}</h5>
+    <p class="card-text">
+      {{ readyInMinutes }} mins |
+      Likes: {{ aggregateLikes }}
+    </p>
 
-      <!-- Dietary badges -->
-      <div class="mb-2">
-        <span
-          v-if="vegan"
-          class="badge bg-success me-1">Vegan</span>
-        <span
-          v-if="vegetarian"
-          class="badge bg-info text-white me-1">Vegetarian</span>
-        <span
-          v-if="glutenFree"
-          class="badge bg-warning text-dark">Gluten Free</span>
-      </div>
-
-      <!-- Viewed indicator -->
-      <div class="mb-3">
-        <span
-          v-if="viewed"
-          class="text-muted">Already Viewed</span>
-        <span
-          v-else
-          class="text-muted">Not Viewed</span>
-      </div>
-
-      <!-- Action buttons -->
-      <div class="d-flex flex-column align-items-stretch gap-2 mt-2">
-        <button
-          type="button"
-          @click="toggleLike"
-          class="btn btn-sm"
-          :class="liked ? 'btn-danger' : 'btn-outline-danger'">
-          {{ liked ? 'Unlike' : 'Like' }}
-        </button>
-        <button
-          v-if="!favorited"
-          type="button"
-          @click="toggleFavorite"
-          class="btn btn-sm btn-outline-warning">
-          Add to Favorites
-        </button>
-        <span
-          v-else
-          class="btn btn-sm btn-warning disabled">
-          Saved to Favorites
-        </span>
-        <router-link
-          :to="{ name: 'RecipeView', query: { id: recipe.id } }"
-          class="btn btn-sm btn-primary">
-          View
-        </router-link>
-      </div>
+    <!-- Dietary badges -->
+    <div class="mb-2">
+      <span v-if="vegan" class="badge bg-success me-1">Vegan</span>
+      <span v-if="vegetarian" class="badge bg-info text-white me-1">Vegetarian</span>
+      <span v-if="glutenFree" class="badge bg-warning text-dark">Gluten Free</span>
     </div>
-  </div>
+
+    <!-- Viewed indicator -->
+    <div class="mb-3">
+      <span v-if="viewed" class="text-muted">Already Viewed</span>
+      <span v-else class="text-muted">Not Viewed</span>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="d-flex flex-column align-items-stretch gap-2 mt-2">
+      <button
+        type="button"
+        @click="toggleLike"
+        class="btn btn-sm"
+        :class="liked ? 'btn-danger' : 'btn-outline-danger'">
+        {{ liked ? 'Unlike' : 'Like' }}
+      </button>
+      <button
+        v-if="!favorited"
+        type="button"
+        @click="toggleFavorite"
+        class="btn btn-sm btn-outline-warning">
+        Add to Favorites
+      </button>
+      <span
+        v-else
+        class="btn btn-sm btn-warning disabled">
+        Saved to Favorites
+      </span>
+      <router-link
+        :to="{ name: 'RecipeView', query: { id: id } }"
+        class="btn btn-sm btn-primary">
+        View
+      </router-link>
+    </div>
+  </b-card>
 </template>
 
 <script>

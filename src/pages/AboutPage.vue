@@ -4,7 +4,9 @@
     <p>
       Welcome to Grandma's Recipes App! our domain: http://recipesNH.cs.bgu.ac.il <br>
       This project is the final assignment of our course in web development enviroments. <br>
-
+      github repositories: <br>
+      frontend - <a href="https://github.com/WED-2023/assignment3-3-207851064_214179012_assignment2" target="_blank">Frontend Repository</a> <br>
+      backend - <a href="https://github.com/WED-2023/assignment3-2-207851064_214179012_assignment2" target="_blank">Backend Repository</a> <br>
     </p>
 
     <h3 class="mt-4">Our Team</h3>
